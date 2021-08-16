@@ -7,6 +7,11 @@ import * as am4charts from "@amcharts/amcharts4/charts";
 import chartData from './chartDummy.json';
 import dqData from './dataQualityDummy.json';
 
+function shortDate (date) {
+  const dateAndTime = date.split('T');
+
+  return dateAndTime[0].split('-').reverse().join('-');
+};
 function last30Days(date){
   const year = date.getFullYear();
   const month = date.getMonth();
@@ -74,7 +79,8 @@ function App(){
     {
       title: 'date',
       dataIndex: 'date',
-      key: 'date'
+      key: 'date',
+      render : ((date) => shortDate(date))
     },
     {
       title: 'group',
