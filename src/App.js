@@ -2,15 +2,15 @@ import './App.css';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import { Table, Space,  Modal, Button} from 'antd';
 import React, { useState, useEffect } from 'react';
+import moment from 'moment';
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4charts from "@amcharts/amcharts4/charts";
 import chartData from './chartDummy.json';
 import dqData from './dataQualityDummy.json';
 
 function shortDate (date) {
-  const dateAndTime = date.split('T');
-
-  return dateAndTime[0].split('-').reverse().join('-');
+  const realDate = moment(date.slice(0,19));
+  return realDate.utc().format('YYYY-MM-DD');
 };
 function last30Days(date){
   const year = date.getFullYear();
@@ -80,7 +80,9 @@ function App(){
       title: 'date',
       dataIndex: 'date',
       key: 'date',
-      render : ((date) => shortDate(date))
+      render : ((date) => shortDate(date)),
+      //Masih fail
+      //sorter : (a,b) => new Date(a.date) - new Date(b.date)
     },
     {
       title: 'group',
@@ -95,7 +97,7 @@ function App(){
     {
       title: 'PIC',
       dataIndex: 'pic',
-      key: 'pic'
+      key: 'pic',
     },
     {
       title: 'dependents',
@@ -110,12 +112,14 @@ function App(){
     {
       title: 'Current Val',
       dataIndex: 'current_value',
-      key: 'current_value'
+      key: 'current_value',
+      sorter: (a, b) => a.current_value - b.current_value
     },
     {
       title: 'Threshold',
       dataIndex: 'threshold',
-      key: 'threshold'
+      key: 'threshold',
+      sorter: (a, b) => a.threshold - b.threshold
     },
     {
       title: 'Status',
@@ -125,12 +129,28 @@ function App(){
     {
       title: 'Aging',
       dataIndex: 'aging',
-      key: 'aging'
+      key: 'aging',
+      sorter: (a, b) => a.aging - b.aging
     },
     {
       title: 'Remark',
       dataIndex: 'remark',
-      key: 'remark'
+      key: 'remark',
+      filters: [
+        {
+          text: 'Resolved',
+          value: 'resolved',
+        },
+        {
+          text: 'Unresolved',
+          value: 'unresolved',
+        },
+        {
+          text: 'On Check',
+          value: 'on check',
+        }
+      ],
+      onFilter: (value, record) => record.remark.indexOf(value) === 0,
     },
     {
       title: 'Action',
